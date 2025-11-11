@@ -1,15 +1,15 @@
 package com.NewsLetterService.NewsLetterService.services;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriberExceptions.SubscriberNotFoundException;
 import com.NewsLetterService.NewsLetterService.entities.Subscriber;
 import com.NewsLetterService.NewsLetterService.repositories.SubscriberRepo;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
 
 @Service
 public class SubscriberService {
@@ -17,33 +17,27 @@ public class SubscriberService {
     @Autowired
     private SubscriberRepo subscriberRepo;
 
-    public ResponseEntity<Subscriber> createSubscriber(Subscriber subscriber) {
-        Subscriber createdSubscriber = subscriberRepo.save(subscriber);
-        return new ResponseEntity<>(createdSubscriber, HttpStatus.CREATED);
+    public Subscriber createSubscriber(@NotNull Subscriber subscriber) {
+        return subscriberRepo.save(subscriber);
     }
 
-    public ResponseEntity<Subscriber> updateSubscriber(Subscriber subscriber) {
-        subscriberRepo.findById(subscriber.getId()).orElseThrow(() -> new SubscriberNotFoundException(subscriber.getId()));
-        Subscriber updatedSubscriber = subscriberRepo.save(subscriber);
-        return new ResponseEntity<>(updatedSubscriber, HttpStatus.OK);
+    public List<Subscriber> getAllSubscribers() {
+        return subscriberRepo.findAll();
     }
 
-    public ResponseEntity<Subscriber> deleteSubscriber(Long id) {
-        Subscriber subscriber = subscriberRepo.findById(id).orElseThrow(() -> new SubscriberNotFoundException(id));
-        if(subscriber != null) {
-            subscriberRepo.delete(subscriber);
-            return new ResponseEntity<>(subscriber, HttpStatus.OK);
-        }
-        throw new EntityNotFoundException("Subscriber with id " + id + " not found");
+    public Subscriber getSubscriberById(@NotNull Long id) {
+        return subscriberRepo.findById(id).orElseThrow(() -> new SubscriberNotFoundException(id));
     }
 
-    public ResponseEntity<List<Subscriber>> getAllSubscribers() {
-        List<Subscriber> subscribers = subscriberRepo.findAll();
-        return new ResponseEntity<>(subscribers, HttpStatus.OK);
+    public Subscriber updateSubscriber(@NotNull Long id, @NotNull Subscriber subscriber) {
+        Subscriber existingSubscriber = getSubscriberById(id);
+        existingSubscriber.setName(subscriber.getName());
+        existingSubscriber.setEmail(subscriber.getEmail());
+        return subscriberRepo.save(existingSubscriber);
     }
 
-    public ResponseEntity<Subscriber> getSubscriberById(Long id) {
-        Subscriber subscriber = subscriberRepo.findById(id).orElseThrow(() -> new SubscriberNotFoundException(id));
-        return new ResponseEntity<>(subscriber, HttpStatus.OK);
+    public void deleteSubscriber(@NotNull Long id) {
+        Subscriber subscriber = getSubscriberById(id);
+        subscriberRepo.delete(subscriber);
     }
 }
