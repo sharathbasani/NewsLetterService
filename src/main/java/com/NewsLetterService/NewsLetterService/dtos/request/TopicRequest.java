@@ -8,4 +8,6 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class TopicRequest {
+    private String name;
+    private String description;
 }
