@@ -1,6 +1,8 @@
 package com.NewsLetterService.NewsLetterService.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,10 +20,12 @@ public class Subscription {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "subscriber_id", nullable = false)
     private Subscriber subscriber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 

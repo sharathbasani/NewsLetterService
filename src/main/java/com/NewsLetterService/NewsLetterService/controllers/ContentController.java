@@ -25,7 +25,7 @@ public class ContentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @GetMapping("/getAllContent")
+    @GetMapping("/getAllContents")
     public ResponseEntity<List<ContentResponse>> getAllContent() {
         return ResponseEntity.ok(contentService.getAllContent());
     }
@@ -41,7 +41,7 @@ public class ContentController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/updateContent/{id}")
+    @PatchMapping("/updateContent/{id}")
     public ResponseEntity<ContentResponse> updateContent(@PathVariable Long id, @RequestBody @NotNull ContentRequest contentRequest) {
         ContentResponse updatedContent = contentService.updateContent(id, contentRequest);
         return ResponseEntity.ok(updatedContent);

@@ -3,9 +3,11 @@ package com.NewsLetterService.NewsLetterService.config;
 import com.NewsLetterService.NewsLetterService.mapper.ContentMapper;
 import com.NewsLetterService.NewsLetterService.mapper.TopicMapper;
 import com.NewsLetterService.NewsLetterService.mapper.SubscriptionMapper;
+import com.NewsLetterService.NewsLetterService.mapper.SubscriberMapper;
 import com.NewsLetterService.NewsLetterService.mapper.impl.ContentMapperImpl;
 import com.NewsLetterService.NewsLetterService.mapper.impl.TopicMapperImpl;
 import com.NewsLetterService.NewsLetterService.mapper.impl.SubscriptionMapperImpl;
+import com.NewsLetterService.NewsLetterService.mapper.impl.SubscriberMapperImpl;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +19,7 @@ public class MapperConfig {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
         return modelMapper;
     }
 
@@ -35,5 +36,10 @@ public class MapperConfig {
     @Bean
     public SubscriptionMapper subscriptionMapper(ModelMapper modelMapper) {
         return new SubscriptionMapperImpl(modelMapper);
+    }
+
+    @Bean
+    public SubscriberMapper subscriberMapper(ModelMapper modelMapper) {
+        return new SubscriberMapperImpl(modelMapper);
     }
 }

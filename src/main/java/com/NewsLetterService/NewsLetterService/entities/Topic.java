@@ -1,5 +1,6 @@
 package com.NewsLetterService.NewsLetterService.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,9 +32,11 @@ public class Topic {
     @Column(name = "last_updated_at", insertable = false, updatable = false)
     private LocalDateTime lastUpdatedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Subscription> subscriptions = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Content> contents = new HashSet<>();
 }

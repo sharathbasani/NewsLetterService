@@ -1,6 +1,9 @@
 package com.NewsLetterService.NewsLetterService.controllers;
 
+import com.NewsLetterService.NewsLetterService.dtos.request.TopicRequest;
+import com.NewsLetterService.NewsLetterService.dtos.response.TopicResponse;
 import com.NewsLetterService.NewsLetterService.entities.Topic;
+import com.NewsLetterService.NewsLetterService.mapper.TopicMapper;
 import com.NewsLetterService.NewsLetterService.services.TopicService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +20,31 @@ public class TopicController{
     @Autowired
     private TopicService topicService;
 
+    @Autowired
+    private TopicMapper topicMapper;
+
     @PostMapping("/createTopic")
-    public ResponseEntity<Topic> createTopic(@NotNull Topic topic) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(topicService.createTopic(topic));
+    public ResponseEntity<TopicResponse> createTopic(@RequestBody @NotNull TopicRequest topicRequest) {
+        Topic topic = topicMapper.toEntity(topicRequest);
+        Topic created = topicService.createTopic(topic);
+        return ResponseEntity.status(HttpStatus.CREATED).body(topicMapper.toResponse(created));
     }
 
     @GetMapping("/getAllTopics")
-    public ResponseEntity<List<Topic>> getAllTopics() {
-        return ResponseEntity.ok(topicService.getAllTopics());
+    public ResponseEntity<List<TopicResponse>> getAllTopics() {
+        return ResponseEntity.ok(topicMapper.toResponseList(topicService.getAllTopics()));
     }
 
     @GetMapping("/getTopic/{id}")
-    public ResponseEntity<Topic> getTopicById(@PathVariable Long id) {
-        return ResponseEntity.ok(topicService.getTopicById(id));
+    public ResponseEntity<TopicResponse> getTopicById(@PathVariable Long id) {
+        return ResponseEntity.ok(topicMapper.toResponse(topicService.getTopicById(id)));
     }
 
     @PatchMapping("/updateTopic/{id}")
-    public ResponseEntity<Topic> updateTopic(@PathVariable Long id, @NotNull Topic topic) {
-        return ResponseEntity.ok(topicService.updateTopic(id, topic));
+    public ResponseEntity<TopicResponse> updateTopic(@PathVariable Long id, @RequestBody @NotNull TopicRequest topicRequest) {
+        Topic topic = topicMapper.toEntity(topicRequest);
+        Topic updated = topicService.updateTopic(id, topic);
+        return ResponseEntity.ok(topicMapper.toResponse(updated));
     }
 
     @DeleteMapping("/deleteTopic/{id}")

@@ -7,19 +7,12 @@ import com.NewsLetterService.NewsLetterService.services.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/subscriptions")
+@RequestMapping("/subscription")
 public class SubscriptionController {
 
     @Autowired
@@ -42,7 +35,7 @@ public class SubscriptionController {
         return ResponseEntity.ok(subscriptionMapper.toResponse(subscriptionService.getSubscriptionById(id)));
     }
 
-    @PutMapping("/updateSubscription/{id}")
+    @PatchMapping("/updateSubscription/{id}")
     public ResponseEntity<SubscriptionResponse> updateSubscription(@PathVariable Long id, @RequestBody SubscriptionRequest request) {
         return ResponseEntity.ok(subscriptionService.updateSubscription(id, request.getSubscriberId(), request.getTopicId()));
     }

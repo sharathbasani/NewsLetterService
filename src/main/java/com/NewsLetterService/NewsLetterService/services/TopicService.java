@@ -1,5 +1,6 @@
 package com.NewsLetterService.NewsLetterService.services;
 
+import com.NewsLetterService.NewsLetterService.customExceptions.topicExceptions.DuplicateTopicException;
 import com.NewsLetterService.NewsLetterService.customExceptions.topicExceptions.TopicNotFoundException;
 import com.NewsLetterService.NewsLetterService.entities.Topic;
 import com.NewsLetterService.NewsLetterService.repositories.TopicRepo;
@@ -16,6 +17,9 @@ public class TopicService {
     private TopicRepo topicRepo;
 
     public Topic createTopic(@NotNull Topic topic) {
+        if(topicRepo.existsTopicByName(topic.getName())) {
+            throw new DuplicateTopicException(topic.getName());
+        }
         return topicRepo.save(topic);
     }
 

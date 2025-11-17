@@ -1,9 +1,13 @@
 package com.NewsLetterService.NewsLetterService.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "content")
@@ -18,6 +22,7 @@ public class Content {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
@@ -28,7 +33,8 @@ public class Content {
     private String body;
 
     @Column(name = "scheduled_at", nullable = false)
-    private LocalDateTime scheduledAt;
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime scheduledAt;
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
