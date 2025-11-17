@@ -8,11 +8,14 @@ import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExce
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExceptions.SubscriptionNotFoundException;
 import com.NewsLetterService.NewsLetterService.customExceptions.topicExceptions.TopicNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -26,26 +29,28 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request) {
+            @NonNull MethodArgumentNotValidException ex,
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
+            @NonNull WebRequest request) {
 
         List<String> messages = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .toList();
+        log.warn("Validation failed: {} | Path: {}", messages,
+                ((ServletWebRequest) request).getRequest().getRequestURI());
 
         return buildErrorResponse(
                 "ValidationError",
                 messages,
                 HttpStatus.BAD_REQUEST,
-                request
-        );
+                request);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -57,18 +62,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                 .toList();
+        log.warn("Constraint violation: {} | Path: {}", messages,
+                ((ServletWebRequest) request).getRequest().getRequestURI());
 
         return buildErrorResponse(
                 "ValidationError",
                 messages,
                 HttpStatus.BAD_REQUEST,
-                request
-        );
+                request);
     }
 
     @ExceptionHandler(BaseAppException.class)
     public ResponseEntity<Object> handleAppExceptions(BaseAppException ex, WebRequest request) {
-
         HttpStatus status = HttpStatus.BAD_REQUEST;
         if (ex instanceof SubscriberNotFoundException ||
                 ex instanceof TopicNotFoundException ||
@@ -81,33 +86,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex instanceof EmailProviderUnavailableException) {
             status = HttpStatus.SERVICE_UNAVAILABLE;
         }
+        log.error("App exception: {} | Status: {} | Path: {}", ex.getMessage(), status,
+                ((ServletWebRequest) request).getRequest().getRequestURI());
 
         return buildErrorResponse(
                 ex.getClass().getSimpleName(),
                 List.of(ex.getMessage()),
                 status,
-                request
-        );
+                request);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
-            Exception ex,
-            Object body,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request) {
+            @NonNull Exception ex,
+            @Nullable Object body,
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
+            @NonNull WebRequest request) {
 
+        log.error("Framework exception: {} | Status: {} | Path: {}", ex.getMessage(), status,
+                ((ServletWebRequest) request).getRequest().getRequestURI());
         return buildErrorResponse(
                 ex.getClass().getSimpleName(),
                 List.of(ex.getMessage() != null ? ex.getMessage() : "Unexpected framework error"),
                 HttpStatus.valueOf(status.value()),
-                request
-        );
+                request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAll(Exception ex) {
+
+        log.error("Unhandled exception: ", ex);
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("error", "InternalServerError");
