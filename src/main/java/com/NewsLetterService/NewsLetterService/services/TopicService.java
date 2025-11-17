@@ -13,7 +13,7 @@ import java.util.List;
 public class TopicService {
 
     @Autowired
-    TopicRepo topicRepo;
+    private TopicRepo topicRepo;
 
     public Topic createTopic(@NotNull Topic topic) {
         return topicRepo.save(topic);

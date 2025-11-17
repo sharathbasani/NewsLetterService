@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContentRepo extends JpaRepository<Content, Long> {
+    boolean existsContentByTitle(String title);
 }

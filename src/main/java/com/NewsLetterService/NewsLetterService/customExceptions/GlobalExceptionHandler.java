@@ -4,7 +4,7 @@ import com.NewsLetterService.NewsLetterService.customExceptions.EmailExceptions.
 import com.NewsLetterService.NewsLetterService.customExceptions.EmailExceptions.EmailSendingException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriberExceptions.DuplicateSubscriberException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriberExceptions.SubscriberNotFoundException;
-import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExceptions.SubscriptionAlreadyExistsException;
+import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExceptions.DuplicateSubscriptionException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExceptions.SubscriptionNotFoundException;
 import com.NewsLetterService.NewsLetterService.customExceptions.topicExceptions.TopicNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex instanceof SubscriptionNotFoundException) {
             status = HttpStatus.NOT_FOUND;
         } else if (ex instanceof DuplicateSubscriberException ||
-                ex instanceof SubscriptionAlreadyExistsException) {
+                ex instanceof DuplicateSubscriptionException) {
             status = HttpStatus.CONFLICT;
         } else if (ex instanceof EmailSendingException ||
                 ex instanceof EmailProviderUnavailableException) {

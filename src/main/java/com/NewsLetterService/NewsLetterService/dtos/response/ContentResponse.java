@@ -15,4 +15,5 @@ public class ContentResponse {
     private LocalDateTime scheduledAt;
     private LocalDateTime createdAt;
     private LocalDateTime lastUpdatedAt;
+    private String topicName;
 }

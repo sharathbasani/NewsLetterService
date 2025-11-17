@@ -2,8 +2,8 @@ package com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExc
 
 import com.NewsLetterService.NewsLetterService.customExceptions.BaseAppException;
 
-public class SubscriptionAlreadyExistsException extends BaseAppException {
-    public SubscriptionAlreadyExistsException(Long subscriberId, Long topicId) {
+public class DuplicateSubscriptionException extends BaseAppException {
+    public DuplicateSubscriptionException(Long subscriberId, Long topicId) {
         super("Subscriber " + subscriberId + " is already subscribed to topic " + topicId);
     }
 }

@@ -1,11 +1,11 @@
 package com.NewsLetterService.NewsLetterService.controllers;
 
-import com.NewsLetterService.NewsLetterService.dtos.request.ContentUpdateRequest;
+import com.NewsLetterService.NewsLetterService.dtos.request.ContentRequest;
 import com.NewsLetterService.NewsLetterService.dtos.response.ContentResponse;
-import com.NewsLetterService.NewsLetterService.dtos.request.ContentCreateRequest;
 import com.NewsLetterService.NewsLetterService.services.ContentService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,12 @@ import java.util.List;
 @RequestMapping("/content")
 @RequiredArgsConstructor
 public class ContentController {
+    @Autowired
     private final ContentService contentService;
 
     @PostMapping("/createContent")
-    public ResponseEntity<ContentResponse> createContent(@RequestBody @NotNull ContentCreateRequest contentCreateRequest) {
-        ContentResponse created = contentService.createContent(contentCreateRequest);
+    public ResponseEntity<ContentResponse> createContent(@RequestBody @NotNull ContentRequest contentRequest) {
+        ContentResponse created = contentService.createContent(contentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -41,8 +42,8 @@ public class ContentController {
     }
 
     @PutMapping("/updateContent/{id}")
-    public ResponseEntity<ContentResponse> updateContent(@PathVariable Long id, @RequestBody @NotNull ContentUpdateRequest contentUpdateRequest) {
-        ContentResponse updatedContent = contentService.updateContent(id, contentUpdateRequest);
+    public ResponseEntity<ContentResponse> updateContent(@PathVariable Long id, @RequestBody @NotNull ContentRequest contentRequest) {
+        ContentResponse updatedContent = contentService.updateContent(id, contentRequest);
         return ResponseEntity.ok(updatedContent);
     }
 }

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class ContentCreateRequest {
+public class ContentRequest {
     private Long topicId;
     private String title;
     private String body;

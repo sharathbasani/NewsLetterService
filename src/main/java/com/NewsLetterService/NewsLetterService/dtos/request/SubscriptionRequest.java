@@ -8,4 +8,6 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class SubscriptionRequest {
+    private Long subscriberId;
+    private Long topicId;
 }

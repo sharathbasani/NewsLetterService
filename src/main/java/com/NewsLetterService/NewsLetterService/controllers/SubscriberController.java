@@ -1,7 +1,7 @@
 package com.NewsLetterService.NewsLetterService.controllers;
 import java.util.List;
 
-import com.NewsLetterService.NewsLetterService.dtos.response.SubscriptionResponse;
+import com.NewsLetterService.NewsLetterService.entities.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class SubscriberController {
     }
 
     @GetMapping("/getAllSubscriptions/{id}")
-    public ResponseEntity<List<SubscriptionResponse>> getAllSubscriptions(@PathVariable Long id) {
+    public ResponseEntity<List<Subscription>> getAllSubscriptions(@PathVariable Long id) {
         return ResponseEntity.ok(subscriberService.getAllSubscriptions(id));
     }
 
