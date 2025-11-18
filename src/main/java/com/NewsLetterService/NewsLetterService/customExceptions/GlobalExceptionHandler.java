@@ -2,10 +2,13 @@ package com.NewsLetterService.NewsLetterService.customExceptions;
 
 import com.NewsLetterService.NewsLetterService.customExceptions.EmailExceptions.EmailProviderUnavailableException;
 import com.NewsLetterService.NewsLetterService.customExceptions.EmailExceptions.EmailSendingException;
+import com.NewsLetterService.NewsLetterService.customExceptions.contentExceptions.ContentNotFoundException;
+import com.NewsLetterService.NewsLetterService.customExceptions.contentExceptions.DuplicateContentException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriberExceptions.DuplicateSubscriberException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriberExceptions.SubscriberNotFoundException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExceptions.DuplicateSubscriptionException;
 import com.NewsLetterService.NewsLetterService.customExceptions.subscriptionExceptions.SubscriptionNotFoundException;
+import com.NewsLetterService.NewsLetterService.customExceptions.topicExceptions.DuplicateTopicException;
 import com.NewsLetterService.NewsLetterService.customExceptions.topicExceptions.TopicNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +34,27 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final Map<Class<? extends BaseAppException>, HttpStatus> EXCEPTION_STATUS_MAP = Map.ofEntries(
+            Map.entry(SubscriberNotFoundException.class, HttpStatus.NOT_FOUND),
+            Map.entry(TopicNotFoundException.class, HttpStatus.NOT_FOUND),
+            Map.entry(SubscriptionNotFoundException.class, HttpStatus.NOT_FOUND),
+            Map.entry(ContentNotFoundException.class, HttpStatus.NOT_FOUND),
+
+            Map.entry(DuplicateSubscriberException.class, HttpStatus.CONFLICT),
+            Map.entry(DuplicateSubscriptionException.class, HttpStatus.CONFLICT),
+            Map.entry(DuplicateContentException.class, HttpStatus.CONFLICT),
+            Map.entry(DuplicateTopicException.class, HttpStatus.CONFLICT),
+
+            Map.entry(EmailSendingException.class, HttpStatus.SERVICE_UNAVAILABLE),
+            Map.entry(EmailProviderUnavailableException.class, HttpStatus.SERVICE_UNAVAILABLE)
+    );
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             @NonNull MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers,
             @NonNull HttpStatusCode status,
             @NonNull WebRequest request) {
-
         List<String> messages = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -74,18 +91,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BaseAppException.class)
     public ResponseEntity<Object> handleAppExceptions(BaseAppException ex, WebRequest request) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        if (ex instanceof SubscriberNotFoundException ||
-                ex instanceof TopicNotFoundException ||
-                ex instanceof SubscriptionNotFoundException) {
-            status = HttpStatus.NOT_FOUND;
-        } else if (ex instanceof DuplicateSubscriberException ||
-                ex instanceof DuplicateSubscriptionException) {
-            status = HttpStatus.CONFLICT;
-        } else if (ex instanceof EmailSendingException ||
-                ex instanceof EmailProviderUnavailableException) {
-            status = HttpStatus.SERVICE_UNAVAILABLE;
-        }
+        HttpStatus status = EXCEPTION_STATUS_MAP.getOrDefault(ex.getClass(), HttpStatus.INTERNAL_SERVER_ERROR);
+
         log.error("App exception: {} | Status: {} | Path: {}", ex.getMessage(), status,
                 ((ServletWebRequest) request).getRequest().getRequestURI());
 
@@ -93,7 +100,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getClass().getSimpleName(),
                 List.of(ex.getMessage()),
                 status,
-                request);
+                request
+        );
     }
 
     @Override
