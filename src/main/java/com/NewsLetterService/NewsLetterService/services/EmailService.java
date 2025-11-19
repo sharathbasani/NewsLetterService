@@ -5,6 +5,7 @@ import com.NewsLetterService.NewsLetterService.customExceptions.EmailExceptions.
 import com.NewsLetterService.NewsLetterService.dtos.request.BrevoEmailRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -45,5 +46,10 @@ public class EmailService {
         catch (Exception e) {
             throw new EmailSendingException(toEmail, e.getMessage());
         }
+    }
+
+    @Async
+    public void sendEmailAsync(String toEmail, String subject, String body) {
+        sendEmail(toEmail, subject, body);
     }
 }

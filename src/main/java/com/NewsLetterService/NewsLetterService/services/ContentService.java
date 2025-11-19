@@ -40,7 +40,6 @@ public class ContentService {
         Topic topic = topicService.getTopicById(topicId);
 
         Content content = contentMapper.toEntity(contentRequest);
-        content.setScheduledAt(contentRequest.getScheduledAt().withSecond(0).withNano(0));
         content.setTopic(topic);
 
         Content savedContent = contentRepo.save(content);
@@ -59,7 +58,6 @@ public class ContentService {
 
     public ContentResponse updateContent(Long id, ContentRequest contentRequest) {
         Content content = getContentEntityById(id);
-        content.setScheduledAt(contentRequest.getScheduledAt().withSecond(0).withNano(0));
         contentMapper.updateEntityFromDto(contentRequest, content);
 
         if (contentRequest.getTopicId() != null) {

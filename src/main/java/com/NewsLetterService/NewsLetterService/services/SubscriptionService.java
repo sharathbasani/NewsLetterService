@@ -10,7 +10,6 @@ import com.NewsLetterService.NewsLetterService.entities.Topic;
 import com.NewsLetterService.NewsLetterService.mapper.SubscriptionMapper;
 import com.NewsLetterService.NewsLetterService.repositories.SubscriptionRepo;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,5 +75,9 @@ public class SubscriptionService {
     public void deleteSubscription(Long id) {
         Subscription existing = getSubscriptionById(id);
         subscriptionRepo.delete(existing);
+    }
+
+    public List<String> findSubscriberEmailsByTopicId(Long topicId) {
+        return subscriptionRepo.findSubscriberEmailsByTopic(topicId);
     }
 }

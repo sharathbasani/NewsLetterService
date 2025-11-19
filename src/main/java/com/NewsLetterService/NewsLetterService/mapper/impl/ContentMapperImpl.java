@@ -6,7 +6,6 @@ import com.NewsLetterService.NewsLetterService.entities.Content;
 import com.NewsLetterService.NewsLetterService.mapper.ContentMapper;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,11 +23,9 @@ public class ContentMapperImpl implements ContentMapper {
             return null;
         }
         Content content = new Content();
-        content.setTitle(dto.getTitle());
-        content.setBody(dto.getBody());
-        if (dto.getScheduledAt() != null) {
-            content.setScheduledAt(dto.getScheduledAt());
-        }
+        if(dto.getTitle() != null) content.setTitle(dto.getTitle());
+        if(dto.getBody() != null) content.setBody(dto.getBody());
+        if (dto.getScheduledAt() != null) content.setScheduledAt(dto.getScheduledAt());
         return content;
     }
 
@@ -37,9 +34,7 @@ public class ContentMapperImpl implements ContentMapper {
         if (dto != null) {
             if (dto.getTitle() != null) entity.setTitle(dto.getTitle());
             if (dto.getBody() != null) entity.setBody(dto.getBody());
-            if (dto.getScheduledAt() != null) {
-                entity.setScheduledAt(dto.getScheduledAt());
-            }
+            if (dto.getScheduledAt() != null) entity.setScheduledAt(dto.getScheduledAt());
         }
     }
 
@@ -48,14 +43,7 @@ public class ContentMapperImpl implements ContentMapper {
         if (entity == null) {
             return null;
         }
-        ContentResponse response = modelMapper.map(entity, ContentResponse.class);
-        if (entity.getTopic() != null) {
-            response.setTopicName(entity.getTopic().getName());
-        }
-        if (entity.getScheduledAt() != null) {
-            response.setScheduledAt(entity.getScheduledAt());
-        }
-        return response;
+        return modelMapper.map(entity, ContentResponse.class);
     }
 
     @Override
