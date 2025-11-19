@@ -46,8 +46,8 @@ Swagger/OpenAPI: available under `/api/swagger-ui/index.html` and OpenAPI JSON a
 - User registration and login
 - JWT authentication (Bearer tokens)
 - CRUD operations for Topics, Subscribers, Subscriptions, and Content
-- Send ad-hoc emails via `/api/email/send`
-- Scheduler that runs every minute and sends scheduled content to subscribers of a topic
+- Send ad-hoc emails via `/api/email/send` (ad-hoc sends are synchronous)
+- Scheduler that runs every minute and sends scheduled content to subscribers of a topic (scheduled sends are dispatched asynchronously)
 - Validation and centralized exception handling with structured JSON error responses
 
 ## Technology stack
@@ -223,6 +223,10 @@ Behavior:
 2. For each matching `Content`, the service queries `SubscriptionRepo.findSubscriberEmailsByTopic(topicId)` to collect subscriber emails.
 3. The `EmailService` sends the content `title` and `body` to each subscriber email.
 
+Notes about asynchronous sending:
+- Scheduled sends use an asynchronous method `EmailService.sendEmailAsync(...)` annotated with Spring's `@Async`. The project enables async processing via `AsyncConfig` (`@EnableAsync`) and registers `GlobalAsyncExceptionHandler` to capture uncaught exceptions from async methods.
+- Ad-hoc sends invoked via the `/api/email/send` endpoint currently call the synchronous `EmailService.sendEmail(...)` method.
+
 ## Error handling & logging
 - Centralized exception handling is in `GlobalExceptionHandler`.
   - Validation errors produce `400 Bad Request` with `ValidationError` details.
@@ -273,7 +277,7 @@ security.jwt.expiration-ms=86400000
 
 Below are concise recommendations to make the service more robust, scalable, and production-ready.
 
-#### Asynchronous Email Sending (High Priority)
+#### Asynchronous Email Sending
 - Move email sending to an asynchronous pipeline using a message queue.
 - Producers publish email tasks; consumers or workers process them.
 - Add retries with exponential backoff and a dead-letter queue (DLQ).
