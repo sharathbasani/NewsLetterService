@@ -2,6 +2,11 @@
 
 A Spring Boot microservice for creating topics, managing subscribers and subscriptions, scheduling content delivery, and sending emails. It uses JWT-based authentication, Spring Data JPA for persistence, and a scheduled task to dispatch content to subscribers at configured times.
 
+## Instructions
+- If the service is not used for a longer time. It will be become inactive (Render free tier restriction).
+- To use it, please visit https://newsletterservice.onrender.com first to initiate re-deployment.
+- Time to be stored in DB is UTC (Render uses UTC timezone during deployment)
+
 ## Table of contents
 - Project overview
 - Open Source tools used
